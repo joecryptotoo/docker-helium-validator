@@ -1,0 +1,47 @@
+---
+version: "2.1"
+
+networks:
+  validator:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.20.0.0/24
+
+volumes:
+  validator:
+
+
+services:
+  validator:
+    image: quay.io/team-helium/validator:latest-validator-amd64
+    container_name: validator
+    init: true
+    ports:
+      - 2154:2154/tcp
+      - 8080:8080/tcp
+    expose:
+      - 2154/tcp
+      - 4369/tcp
+      - 4467/tcp
+      - 8080/tcp
+    environment:
+      - NAT_INTERNAL_IP=172.20.0.5
+      - NAT_EXTERNAL_IP=${NAT_EXTERNAL_IP:?err}
+      - NAT_INTERNAL_PORT=2154
+      - NAT_EXTERNAL_PORT=2154
+    volumes:
+      - 'validator:/var/data'
+      - './swarm_key:/var/data/miner/swarm_key'
+    networks:
+      validator:
+        ipv4_address: 172.20.0.5
+    ulimits:
+      nofile:
+        soft: 64000
+        hard: 64000
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
