@@ -10,5 +10,6 @@ NAT_EXTERNAL_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) docker-com
 
 To upgrade run:
 ```
-docker-compose pull validator && docker-compose up -d validator
+NAT_EXTERNAL_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) docker-compose pull validator
+NAT_EXTERNAL_IP=$(dig +short myip.opendns.com @resolver1.opendns.com) docker-compose up -d validator
 ```
